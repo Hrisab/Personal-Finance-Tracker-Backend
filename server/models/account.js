@@ -168,11 +168,12 @@ accountSchema.methods = {
         const now = new Date();
         let paymentDueDate = new Date(now.getFullYear(), now.getMonth(), this.dueDate);
 
-        if(dueDate < now) {
-            dueDate = new Date(now.getFullYear(), now.getMonth() + 1, this.dueDate);
+        if(now.getDate() > this.dueDate) {
+            paymentDueDate = new Date(now.getFullYear(), now.getMonth() + 1, this.dueDate);
         }
 
         this.nextPaymentDueDate = paymentDueDate; 
+        return paymentDueDate;
     },
 
     calculateNextInterestUpdate: function() {
@@ -235,7 +236,7 @@ accountSchema.virtual('daysUntilPaymentDue').get(function() {
     if (!this.nextPaymentDueDate)
         return null;
 
-    return Math.cell(this.nextPaymentDueDate - new Date()) / (24 * 60 * 60 * 1000);
+    return Math.ceil(this.nextPaymentDueDate - new Date()) / (24 * 60 * 60 * 1000);
 });
 
 const Account = mongoose.model('Account', accountSchema);

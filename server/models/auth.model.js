@@ -1,14 +1,10 @@
 import mongoose from "mongoose";
 import { genSalt, hash } from "bcrypt";
 
-//can add a preference for currecny or budget cycle dates
+//can add a preference for currency or budget cycle dates
 //googleID as a schema
 
 const UserSchema =  new mongoose.Schema({
-    name: {
-        type: String, 
-        required: true,
-    },
     email: {
         type: String,
         required: [true,"email is required"],
@@ -17,6 +13,27 @@ const UserSchema =  new mongoose.Schema({
     password:{
         type: String,
         required:[true,"password is required"],
+    },
+    firstName: {
+        type: String,
+        required: false
+    },
+    lastName: {
+        type: String,
+        required: false
+    },
+    image: {
+        type: String,
+        required: false
+    },
+    color: {
+        type: Number,
+        required: false
+    },
+    profileSetup: {
+        type: Boolean,
+        required: false,
+        default: false
     },
     createdAt: {
         type:Date,

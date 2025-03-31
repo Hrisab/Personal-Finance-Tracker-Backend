@@ -1,5 +1,5 @@
 import { compare } from "bcrypt";
-import User from "../models/User.model.js";
+import User from "../models/auth.model.js";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from 'google-auth-library';
 
@@ -26,11 +26,11 @@ export const signup = async (req, res, next) => {
         }
 
         const user = await User.create({email, password});
-        res.cookie("jwt", createToken(email, user.id), {
-            maxAge,
-            secure: true,
-            sameSite:"None",
-        });
+        // res.cookie("jwt", createToken(email, user.id), {
+        //     maxAge,
+        //     secure: true,
+        //     sameSite:"None",
+        // });
         return res.status(201).json({
             user: {
                 id: user.id,
@@ -90,8 +90,8 @@ export const getUserInfo = async (req, res, next) => {
             id:userData.id,
             email:userData.email,
             profileSetup:userData.profileSetup,
-            firstname:userData.firstname,
-            lastname:userData.lastname,
+            firstName:userData.firstName,
+            lastName:userData.lastName,
             image:userData.image,
             color:userData.color,
         });
@@ -104,8 +104,8 @@ export const getUserInfo = async (req, res, next) => {
 export const updateProfile = async (req, res ,next) => {
     try {
         const {userId} = req;
-        const {firstname, lastname, color} = req.body;
-        if (!firstname || !lastname ) {
+        const {firstName, lastName, color} = req.body;
+        if (!firstName || !lastName ) {
             return res
             .status(400)
             .send("First name, last name and color are required");
@@ -113,8 +113,8 @@ export const updateProfile = async (req, res ,next) => {
         const userData = await User.findByIdAndUpdate(
             userId, 
         {
-            firstname,
-            lastname,
+            firstName,
+            lastName,
             color,
             profileSetup: true,
         }, {new: true, runValidators: true});
@@ -122,8 +122,8 @@ export const updateProfile = async (req, res ,next) => {
             id: userData.id,
             email: userData.email,
             profileSetup: userData.profileSetup,
-            firstname: userData.firstname,
-            lastname: userData.lastname,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
             image: userData.image,
             color: userData.color,
         });
@@ -139,7 +139,7 @@ export const addProfileImage = async (req, res ,next) => {
             return res.status(400).send("Image is required");
         }
         const date = Date.now();
-        const fileName = "uploads/profiles/"+date+req.file.originalname;
+        const fileName = "uploads/profiles/" + date + req.file.originalname;
         renameSync(req.file.path, fileName);
 
         const updatedUser = await User.findByIdAndUpdate(

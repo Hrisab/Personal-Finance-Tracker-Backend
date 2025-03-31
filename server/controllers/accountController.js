@@ -3,9 +3,18 @@ export const createAccount = async (req, res) => {
     try{
         const account = new Account(req.body);
         await account.save();
-        res.status(200).json({account});
+        res.status(200).json({message: "Account Created",account});
     } catch (error) {
-        res.status(400).json({message: "Server error", error});
+        console.error("Account creation error:", error);
+
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: error.errors
+            });
+        }
+
+        res.status(500).json({message: "Internal server error", error: error.message});
     }
 };
 
